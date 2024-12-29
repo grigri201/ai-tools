@@ -1,4 +1,6 @@
 // Search engine module using DuckDuckGo
+import { parse } from 'node-html-parser';
+
 export interface SearchResult {
     title: string;
     url: string;
@@ -51,24 +53,23 @@ export async function search(
         }
 
         const html = await response.text();
+        const root = parse(html);
         const results: SearchResult[] = [];
 
-        // Use regex to find all result blocks
-        const resultBlocks = html.match(/<div class="links_main links_deep result__body">[\s\S]*?<div class="clear"><\/div>/g) || [];
+        // Find all result blocks
+        const resultBlocks = root.querySelectorAll('.result__body');
 
         for (let i = 0; i < Math.min(maxResults, resultBlocks.length); i++) {
             const block = resultBlocks[i];
             
-            // Extract URL and title from result__a
-            const linkMatch = block.match(/<a[^>]*?class="result__a"[^>]*?href="([^"]*)"[^>]*?>([^<]*)<\/a>/);
-            
-            // Extract snippet from result__snippet
-            const snippetMatch = block.match(/<a[^>]*?class="result__snippet"[^>]*?>([^<]*)<\/a>/);
+            // Find elements by class names
+            const linkElement = block.querySelector('.result__a');
+            const snippetElement = block.querySelector('.result__snippet');
 
-            if (linkMatch && snippetMatch) {
-                const url = linkMatch[1];
-                const title = linkMatch[2].trim();
-                const snippet = snippetMatch[1].replace(/&lt;[^>]*&gt;/g, '').trim();
+            if (linkElement && snippetElement) {
+                const url = linkElement.getAttribute('href') || '';
+                const title = linkElement.text.trim();
+                const snippet = snippetElement.text.trim();
 
                 results.push({
                     url,
@@ -91,19 +92,3 @@ export async function search(
         throw new SearchError(`Search failed: ${errorMessage}`);
     }
 }
-
-// Example usage:
-// async function main() {
-//     try {
-//         const results = await search("TypeScript programming", { maxResults: 5 });
-//         results.forEach((result, index) => {
-//             console.log(`\n=== Result ${index + 1} ===`);
-//             console.log(`URL: ${result.url}`);
-//             console.log(`Title: ${result.title}`);
-//             console.log(`Snippet: ${result.snippet}`);
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         process.exit(1);
-//     }
-// }
