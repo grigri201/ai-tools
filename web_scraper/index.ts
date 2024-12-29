@@ -50,15 +50,15 @@ function parseHtml(htmlContent: string | null): string {
         const result: string[] = [];
         const seenTexts = new Set<string>();
 
-        function shouldSkipElement(elem: any): boolean {
+        const shouldSkipElement = (elem: any): boolean => {
             if (elem.tagName === 'SCRIPT' || elem.tagName === 'STYLE') {
                 return true;
             }
             const text = elem.text?.trim();
             return !text;
-        }
+        };
 
-        function processElement(elem: any, depth = 0): void {
+        const processElement = (elem: any, depth = 0): void => {
             if (shouldSkipElement(elem)) {
                 return;
             }
