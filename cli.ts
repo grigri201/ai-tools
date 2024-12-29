@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 
 import { Command } from 'commander';
-import { scrapeUrls } from './web_scraper';
-import { search } from './search_engine';
-import { queryLLM } from './llm_api';
+import { scrapeUrls } from './web_scraper/index';
+import { search } from './search_engine/index';
+import { queryLLM } from './llm_api/index';
 
 const program = new Command();
 
