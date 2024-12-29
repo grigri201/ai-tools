@@ -1,0 +1,21 @@
+{
+  "name": "ai-tools",
+  "version": "1.0.0",
+  "description": "AI-powered tools for web scraping and searching",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "bun src/cli.ts",
+    "test": "bun test",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "openai": "^4.24.1",
+    "playwright": "^1.40.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3"
+  }
+}
